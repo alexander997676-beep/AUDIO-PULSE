@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xyro Music - Fixed Player</title>
+    <title>AUDIO PULSE</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* --- CSS STYLES --- */
         :root {
-            --primary: #ff5500;
-            --dark: #121212;
-            --darker: #0a0a0a;
+            --primary: #ff5500; /* Signature Orange */
+            --dark: #000000;
+            --darker: #121212;
             --light: #ffffff;
             --gray: #b3b3b3;
+            --card-bg: #181818;
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--dark);
             color: var(--light);
             margin: 0;
@@ -34,32 +35,44 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            border-bottom: 1px solid #333;
         }
 
         .logo {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
+            font-weight: 800; /* Extra Bold */
+            color: var(--light);
             display: flex;
             align-items: center;
             gap: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .logo i {
+            color: var(--primary);
         }
 
         .nav-btn {
-            background: none;
-            border: 1px solid var(--gray);
+            background: rgba(255,255,255,0.1);
+            border: none;
             color: var(--light);
-            padding: 8px 15px;
+            padding: 8px 18px;
             border-radius: 20px;
             cursor: pointer;
             transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
         }
 
         /* Search Section */
         .search-wrapper {
             padding: 20px;
-            background-color: var(--darker);
+            background: linear-gradient(180deg, var(--darker) 0%, var(--dark) 100%);
         }
 
         .search-box {
@@ -67,17 +80,24 @@
             margin: 0 auto;
             display: flex;
             gap: 10px;
+            position: relative;
         }
 
         input {
             width: 100%;
-            padding: 12px 20px;
-            border-radius: 25px;
-            border: none;
-            background: #333;
+            padding: 14px 25px;
+            border-radius: 30px;
+            border: 1px solid #333;
+            background: #222;
             color: white;
             outline: none;
             font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: #2a2a2a;
         }
 
         .search-btn {
@@ -85,8 +105,9 @@
             border: none;
             color: white;
             padding: 0 25px;
-            border-radius: 25px;
+            border-radius: 30px;
             cursor: pointer;
+            font-size: 1.1rem;
         }
 
         /* HOME SECTIONS */
@@ -95,12 +116,17 @@
             display: block;
         }
 
-        .section-title {
-            font-size: 1.5rem;
+        .section-header {
+            display: flex;
+            align-items: center;
             margin-top: 30px;
             margin-bottom: 15px;
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
         }
 
         .horizontal-scroll {
@@ -109,48 +135,63 @@
             gap: 20px;
             padding-bottom: 20px;
             scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--dark);
         }
 
         /* Card Styling */
         .card {
-            background: #1e1e1e;
-            border-radius: 10px;
+            background: var(--card-bg);
+            border-radius: 8px;
             overflow: hidden;
-            min-width: 160px;
-            max-width: 160px;
-            position: relative;
+            min-width: 170px;
+            max-width: 170px;
+            transition: transform 0.2s, background 0.2s;
             flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: #252525;
         }
 
         .card img {
             width: 100%;
-            height: 160px;
+            height: 170px;
             object-fit: cover;
+            opacity: 0.9;
         }
 
         .card-body {
-            padding: 10px;
+            padding: 12px;
         }
 
         .card-title {
-            font-weight: bold;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: #fff;
         }
 
         .play-overlay-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px;
+            background-color: transparent;
+            border: 1px solid var(--gray);
+            color: var(--light);
+            padding: 6px 0;
             width: 100%;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            margin-top: 5px;
             font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .play-overlay-btn:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
         }
 
         /* RESULTS GRID */
@@ -160,7 +201,7 @@
         }
         .search-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 20px;
         }
         .search-grid .card {
@@ -174,16 +215,17 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #181818;
+            background-color: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
             border-top: 1px solid #333;
-            padding: 10px 20px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             z-index: 200;
             box-sizing: border-box;
             transform: translateY(100%);
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .player-bar.active { transform: translateY(0); }
@@ -192,14 +234,15 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            width: 40%;
+            width: 35%;
         }
 
         .player-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
+            width: 55px;
+            height: 55px;
+            border-radius: 6px;
             object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .player-text {
@@ -210,7 +253,7 @@
 
         .player-text h4 {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: white;
             white-space: nowrap;
             overflow: hidden;
@@ -218,17 +261,24 @@
         }
 
         .player-status {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: var(--primary);
+            margin-top: 2px;
         }
 
         .player-controls {
             flex-grow: 1;
             display: flex;
             justify-content: flex-end;
+            align-items: center;
         }
 
-        audio { width: 100%; max-width: 400px; height: 35px; }
+        audio {
+            width: 100%;
+            max-width: 450px;
+            height: 40px;
+            border-radius: 20px;
+        }
 
         .loading-text { color: var(--gray); font-style: italic; }
 
@@ -238,30 +288,38 @@
 
     <!-- NAVBAR -->
     <nav>
-        <div class="logo"><i class="fab fa-soundcloud"></i> Xyro Music</div>
-        <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+        <div class="logo">
+            <i class="fas fa-wave-square"></i> AUDIO PULSE
+        </div>
+        <button class="nav-btn" onclick="goHome()">
+            <i class="fas fa-home"></i> Home
+        </button>
     </nav>
 
     <!-- SEARCH BAR -->
     <div class="search-wrapper">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search songs...">
+            <input type="text" id="searchInput" placeholder="Search tracks, artists, or podcasts...">
             <button class="search-btn" onclick="performSearch()"><i class="fas fa-search"></i></button>
         </div>
     </div>
 
     <!-- HOME SECTION -->
     <div id="home-section">
-        <h2 class="section-title">🔥 Trending Now</h2>
-        <div class="horizontal-scroll" id="trending-container"><p class="loading-text">Loading...</p></div>
+        <div class="section-header">
+            <h2 class="section-title">🔥 Trending on Audio Pulse</h2>
+        </div>
+        <div class="horizontal-scroll" id="trending-container"><p class="loading-text">Loading Pulse...</p></div>
 
-        <h2 class="section-title">🇵🇰 Top Pakistani Hits</h2>
-        <div class="horizontal-scroll" id="pakistani-container"><p class="loading-text">Loading...</p></div>
+        <div class="section-header">
+            <h2 class="section-title">🇵🇰 Pakistan Top Hits</h2>
+        </div>
+        <div class="horizontal-scroll" id="pakistani-container"><p class="loading-text">Loading Hits...</p></div>
     </div>
 
     <!-- SEARCH RESULTS -->
     <div id="results-section">
-        <h2 class="section-title">Search Results</h2>
+        <h2 class="section-title" style="margin-bottom: 20px;">Search Results</h2>
         <div class="search-grid" id="search-results-grid"></div>
     </div>
 
@@ -270,7 +328,7 @@
         <div class="player-info">
             <img src="" id="playerImg" class="player-img">
             <div class="player-text">
-                <h4 id="playerTitle">Select a song</h4>
+                <h4 id="playerTitle">Not Playing</h4>
                 <span id="playerStatus" class="player-status">Waiting...</span>
             </div>
         </div>
@@ -285,22 +343,27 @@
         const SEARCH_API = "https://api.xyro.site/search/soundcloud?q=";
         const DOWNLOAD_API = "https://api.xyro.site/download/soundcloud?url=";
 
+        // Load trending content on startup
         window.onload = function() {
-            fetchAndRender("Global Viral Hits 2024", "trending-container");
-            fetchAndRender("Pakistan Coke Studio Top Hits", "pakistani-container");
+            fetchAndRender("Global Viral Hits 2025", "trending-container");
+            fetchAndRender("Coke Studio Pakistan Season 15", "pakistani-container");
         };
 
         function goHome() {
             document.getElementById('home-section').style.display = 'block';
             document.getElementById('results-section').style.display = 'none';
+            document.getElementById('searchInput').value = '';
         }
 
         async function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
+
+            // Switch to Results View
             document.getElementById('home-section').style.display = 'none';
             document.getElementById('results-section').style.display = 'block';
-            document.getElementById('search-results-grid').innerHTML = "<p class='loading-text'>Searching...</p>";
+            document.getElementById('search-results-grid').innerHTML = "<p class='loading-text'>Searching Audio Pulse database...</p>";
+
             await fetchAndRender(query, "search-results-grid");
         }
 
@@ -311,19 +374,23 @@
                 const json = await response.json();
                 
                 let songs = [];
+                // Data detection logic
                 if (Array.isArray(json)) songs = json;
                 else if (json.data) songs = json.data;
+                else if (json.result) songs = json.result;
 
                 container.innerHTML = "";
+                
                 if (!songs || songs.length === 0) {
-                    container.innerHTML = "<p>No songs found.</p>";
+                    container.innerHTML = "<p>No results found.</p>";
                     return;
                 }
 
+                // Show first 15 results
                 songs.slice(0, 15).forEach(song => {
-                    const title = song.title || song.name || "Unknown";
-                    const img = song.thumbnail || song.image || "https://via.placeholder.com/200";
-                    // Important: Save the original URL to convert later
+                    const title = song.title || song.name || "Unknown Track";
+                    const img = song.thumbnail || song.image || song.artwork_url || "https://via.placeholder.com/200?text=Audio+Pulse";
+                    // Original link needed for conversion
                     const trackUrl = song.url || song.permalink_url || song.link;
 
                     const card = document.createElement('div');
@@ -333,7 +400,7 @@
                         <div class="card-body">
                             <div class="card-title">${title}</div>
                             <button class="play-overlay-btn" onclick="prepareTrack('${trackUrl}', '${title.replace(/'/g, "\\'")}', '${img}')">
-                                <i class="fas fa-play"></i> Play
+                                <i class="fas fa-play"></i> Play Now
                             </button>
                         </div>
                     `;
@@ -341,11 +408,11 @@
                 });
             } catch (error) {
                 console.error(error);
-                container.innerHTML = "<p style='color:red;'>Error loading data.</p>";
+                container.innerHTML = "<p style='color:red;'>Connection Error.</p>";
             }
         }
 
-        // --- NEW PLAYBACK LOGIC ---
+        // --- PLAYBACK LOGIC (Fixes Browser Error) ---
         async function prepareTrack(trackUrl, title, img) {
             const playerBar = document.getElementById('musicPlayer');
             const audio = document.getElementById('audioElement');
@@ -353,26 +420,22 @@
             const pStatus = document.getElementById('playerStatus');
             const pImg = document.getElementById('playerImg');
 
-            // 1. Show Player immediately
+            // UI Update
             playerBar.classList.add('active');
             pTitle.innerText = title;
             pImg.src = img;
-            pStatus.innerText = "Getting Stream...";
+            pStatus.innerText = "Connecting to Pulse...";
             
-            // Pause current audio if playing
             audio.pause(); 
-            audio.src = "";
+            audio.src = ""; // Clear buffer
 
             try {
-                // 2. Convert SoundCloud Link to MP3 using Download API
-                console.log("Fetching stream for:", trackUrl);
+                // Fetch MP3 Link
                 const response = await fetch(DOWNLOAD_API + encodeURIComponent(trackUrl));
                 const data = await response.json();
                 
-                console.log("Stream Data:", data);
-
-                // Handle API structure variations
                 let streamLink = null;
+                // Check varied API responses
                 if (data.data && data.data.download) streamLink = data.data.download;
                 else if (data.download) streamLink = data.download;
                 else if (data.url) streamLink = data.url;
@@ -381,16 +444,17 @@
                     pStatus.innerText = "Playing...";
                     audio.src = streamLink;
                     audio.play().catch(e => {
-                        pStatus.innerText = "Error: Browser blocked autoplay.";
+                        console.log("Autoplay prevented:", e);
+                        pStatus.innerText = "Ready to Play (Click Play)";
                     });
                 } else {
-                    pStatus.innerText = "Failed: Stream link not found.";
-                    alert("Sorry, is song ka direct download link nahi mila.");
+                    pStatus.innerText = "Stream Unavailable";
+                    alert("Audio Pulse could not extract this stream. Try another song.");
                 }
 
             } catch (error) {
                 console.error("Stream Error:", error);
-                pStatus.innerText = "Error fetching stream.";
+                pStatus.innerText = "Network Error";
             }
         }
     </script>
