@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xyro Music Player</title>
+    <title>Xyro Music - Home</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* --- CSS STYLES --- */
         :root {
-            --primary: #ff5500; /* SoundCloud Orange */
+            --primary: #ff5500;
             --dark: #121212;
             --darker: #0a0a0a;
             --light: #ffffff;
@@ -21,7 +21,7 @@
             color: var(--light);
             margin: 0;
             padding: 0;
-            padding-bottom: 100px; /* Space for player */
+            padding-bottom: 120px; /* Space for player */
         }
 
         /* Navbar */
@@ -65,7 +65,6 @@
         .search-wrapper {
             padding: 20px;
             background-color: var(--darker);
-            text-align: center;
         }
 
         .search-box {
@@ -86,9 +85,7 @@
             font-size: 1rem;
         }
 
-        input:focus {
-            background: #444;
-        }
+        input:focus { background: #444; }
 
         .search-btn {
             background-color: var(--primary);
@@ -97,62 +94,50 @@
             padding: 0 25px;
             border-radius: 25px;
             cursor: pointer;
-            font-weight: bold;
         }
 
-        /* HOME SECTION */
+        /* HOME SECTIONS (Trending & Pakistani) */
         #home-section {
-            text-align: center;
-            padding: 50px 20px;
-            display: block; /* Visible by default */
-        }
-
-        .hero-title {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        .hero-desc {
-            color: var(--gray);
-            font-size: 1.2rem;
-        }
-
-        .tags {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            background: #333;
-            padding: 8px 15px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .tag:hover { background: var(--primary); }
-
-        /* RESULTS SECTION */
-        #results-section {
             padding: 20px;
-            display: none; /* Hidden by default */
+            display: block;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        .section-title {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        /* Horizontal Scroll Container */
+        .horizontal-scroll {
+            display: flex;
+            overflow-x: auto;
             gap: 20px;
+            padding-bottom: 20px;
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: var(--primary) var(--darker);
         }
 
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .horizontal-scroll::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Card Styling */
         .card {
             background: #1e1e1e;
             border-radius: 10px;
             overflow: hidden;
+            min-width: 180px; /* Fixed width for horizontal scroll */
+            max-width: 180px;
             transition: transform 0.2s;
             position: relative;
+            flex-shrink: 0;
         }
 
         .card:hover {
@@ -162,12 +147,12 @@
 
         .card img {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
         }
 
         .card-body {
-            padding: 15px;
+            padding: 10px;
         }
 
         .card-title {
@@ -175,6 +160,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-size: 0.9rem;
             margin-bottom: 5px;
         }
 
@@ -182,15 +168,28 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px;
+            padding: 8px;
             width: 100%;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
-            font-weight: bold;
+            margin-top: 5px;
+            font-size: 0.8rem;
         }
 
-        .play-overlay-btn:hover { background-color: #e64d00; }
+        /* RESULTS GRID (Search results) */
+        #results-section {
+            padding: 20px;
+            display: none;
+        }
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .search-grid .card {
+            min-width: auto;
+            max-width: none;
+        }
 
         /* BOTTOM PLAYER */
         .player-bar {
@@ -206,13 +205,11 @@
             justify-content: space-between;
             z-index: 200;
             box-sizing: border-box;
-            transform: translateY(100%); /* Hidden initially */
+            transform: translateY(100%);
             transition: transform 0.3s ease-in-out;
         }
 
-        .player-bar.active {
-            transform: translateY(0);
-        }
+        .player-bar.active { transform: translateY(0); }
 
         .player-info {
             display: flex;
@@ -244,24 +241,9 @@
             justify-content: center;
         }
 
-        audio {
-            width: 100%;
-            max-width: 500px;
-            height: 40px;
-        }
+        audio { width: 100%; max-width: 500px; height: 40px; }
 
-        /* Loader */
-        .loader {
-            display: none;
-            border: 4px solid #333;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 50px auto;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { color: var(--gray); font-style: italic; }
 
     </style>
 </head>
@@ -270,7 +252,7 @@
     <!-- NAVBAR -->
     <nav>
         <div class="logo">
-            <i class="fab fa-soundcloud"></i> MusicHub
+            <i class="fab fa-soundcloud"></i> Xyro Music
         </div>
         <button class="nav-btn" onclick="goHome()">
             <i class="fas fa-home"></i> Home
@@ -280,33 +262,34 @@
     <!-- SEARCH BAR -->
     <div class="search-wrapper">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search for songs (e.g. Sidhu Moose Wala)...">
-            <button class="search-btn" onclick="searchSong()">
+            <input type="text" id="searchInput" placeholder="Search songs...">
+            <button class="search-btn" onclick="performSearch()">
                 <i class="fas fa-search"></i>
             </button>
         </div>
     </div>
 
-    <!-- HOME SECTION -->
+    <!-- HOME SECTION (Trending & Pakistani) -->
     <div id="home-section">
-        <h1 class="hero-title">Discover Music</h1>
-        <p class="hero-desc">Search and stream your favorite tracks instantly.</p>
         
-        <div class="tags">
-            <div class="tag" onclick="quickSearch('Top Hits 2024')">Top Hits 2024</div>
-            <div class="tag" onclick="quickSearch('LoFi Beats')">LoFi Beats</div>
-            <div class="tag" onclick="quickSearch('Punjabi Hits')">Punjabi Hits</div>
-            <div class="tag" onclick="quickSearch('Arijit Singh')">Arijit Singh</div>
+        <!-- Trending Section -->
+        <h2 class="section-title">🔥 Trending Now</h2>
+        <div class="horizontal-scroll" id="trending-container">
+            <p class="loading-text">Loading Trending...</p>
         </div>
+
+        <!-- Pakistani Section -->
+        <h2 class="section-title">🇵🇰 Top Pakistani Hits</h2>
+        <div class="horizontal-scroll" id="pakistani-container">
+            <p class="loading-text">Loading Pakistani Hits...</p>
+        </div>
+
     </div>
 
-    <!-- RESULTS SECTION -->
-    <div id="loader" class="loader"></div>
+    <!-- SEARCH RESULTS SECTION -->
     <div id="results-section">
-        <h3 style="margin-bottom: 20px;">Search Results:</h3>
-        <div class="grid" id="results-grid">
-            <!-- Cards will be injected here -->
-        </div>
+        <h2 class="section-title">Search Results</h2>
+        <div class="search-grid" id="search-results-grid"></div>
     </div>
 
     <!-- BOTTOM PLAYER -->
@@ -321,7 +304,6 @@
         <div class="player-controls">
             <audio id="audioElement" controls>
                 <source src="" type="audio/mpeg">
-                Your browser does not support the audio element.
             </audio>
         </div>
     </div>
@@ -329,57 +311,58 @@
     <script>
         const API_BASE = "https://api.xyro.site/search/soundcloud?q=";
 
-        // --- NAVIGATION FUNCTIONS ---
+        // Page Load hone par Home Data Fetch karo
+        window.onload = function() {
+            fetchAndRender("Global Viral Hits 2024", "trending-container");
+            fetchAndRender("Coke Studio Pakistan Top Hits", "pakistani-container");
+        };
+
         function goHome() {
             document.getElementById('home-section').style.display = 'block';
             document.getElementById('results-section').style.display = 'none';
             document.getElementById('searchInput').value = '';
         }
 
-        function quickSearch(term) {
-            document.getElementById('searchInput').value = term;
-            searchSong();
-        }
-
         // --- SEARCH FUNCTION ---
-        async function searchSong() {
+        async function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
-            if (!query) return alert("Kuch likh kar search karein!");
+            if (!query) return;
 
-            // UI Updates
             document.getElementById('home-section').style.display = 'none';
             document.getElementById('results-section').style.display = 'block';
-            const grid = document.getElementById('results-grid');
-            const loader = document.getElementById('loader');
-            
-            grid.innerHTML = ""; // Clear old results
-            loader.style.display = "block";
+            const grid = document.getElementById('search-results-grid');
+            grid.innerHTML = "<p class='loading-text'>Searching...</p>";
 
+            await fetchAndRender(query, "search-results-grid");
+        }
+
+        // --- CORE FUNCTION TO FETCH API & SHOW CARDS ---
+        async function fetchAndRender(query, containerId) {
+            const container = document.getElementById(containerId);
+            
             try {
                 const response = await fetch(API_BASE + encodeURIComponent(query));
                 const json = await response.json();
                 
-                loader.style.display = "none";
-
-                // Normalize Data (Handle different API structures)
+                // Normalizing Data
                 let songs = [];
                 if (Array.isArray(json)) songs = json;
                 else if (json.data) songs = json.data;
                 else if (json.result) songs = json.result;
 
-                if (songs.length === 0) {
-                    grid.innerHTML = "<p>Koi song nahi mila. Dubara try karein.</p>";
+                container.innerHTML = ""; // Clear loading text
+
+                if (!songs || songs.length === 0) {
+                    container.innerHTML = "<p>No songs found.</p>";
                     return;
                 }
 
-                songs.forEach(song => {
-                    // Extract Details
+                // Sirf pehle 15 songs dikhao taake load kam ho
+                songs.slice(0, 15).forEach(song => {
                     const title = song.title || song.name || "Unknown Track";
                     const img = song.thumbnail || song.image || song.artwork_url || "https://via.placeholder.com/200";
-                    // Try to find a playable link
                     const streamUrl = song.download || song.url || song.link;
 
-                    // Create Card HTML
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.innerHTML = `
@@ -387,17 +370,16 @@
                         <div class="card-body">
                             <div class="card-title">${title}</div>
                             <button class="play-overlay-btn" onclick="playTrack('${streamUrl}', '${title.replace(/'/g, "\\'")}', '${img}')">
-                                <i class="fas fa-play"></i> Play Now
+                                <i class="fas fa-play"></i> Play
                             </button>
                         </div>
                     `;
-                    grid.appendChild(card);
+                    container.appendChild(card);
                 });
 
             } catch (error) {
                 console.error(error);
-                loader.style.display = "none";
-                grid.innerHTML = "<p style='color:red;'>Error fetching data. API might be busy.</p>";
+                container.innerHTML = "<p style='color:red;'>Error loading.</p>";
             }
         }
 
@@ -408,21 +390,11 @@
             const pTitle = document.getElementById('playerTitle');
             const pImg = document.getElementById('playerImg');
 
-            // Show Player
             playerBar.classList.add('active');
-
-            // Update Info
             pTitle.innerText = title;
             pImg.src = img;
-
-            // Update Audio Source
             audio.src = url;
-            
-            // Try to play
-            audio.play().catch(e => {
-                console.log("Auto-play blocked or link invalid", e);
-                alert("Playback error: Yeh link shayad direct MP3 nahi hai, ya browser ne block kiya hai.");
-            });
+            audio.play().catch(e => console.log("Play error", e));
         }
     </script>
 </body>
