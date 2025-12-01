@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xyro Music - Home</title>
+    <title>Xyro Music - Fixed Player</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* --- CSS STYLES --- */
@@ -56,11 +56,6 @@
             transition: 0.3s;
         }
 
-        .nav-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
         /* Search Section */
         .search-wrapper {
             padding: 20px;
@@ -85,8 +80,6 @@
             font-size: 1rem;
         }
 
-        input:focus { background: #444; }
-
         .search-btn {
             background-color: var(--primary);
             border: none;
@@ -96,7 +89,7 @@
             cursor: pointer;
         }
 
-        /* HOME SECTIONS (Trending & Pakistani) */
+        /* HOME SECTIONS */
         #home-section {
             padding: 20px;
             display: block;
@@ -110,22 +103,12 @@
             padding-left: 10px;
         }
 
-        /* Horizontal Scroll Container */
         .horizontal-scroll {
             display: flex;
             overflow-x: auto;
             gap: 20px;
             padding-bottom: 20px;
-            scrollbar-width: thin; /* Firefox */
-            scrollbar-color: var(--primary) var(--darker);
-        }
-
-        .horizontal-scroll::-webkit-scrollbar {
-            height: 8px;
-        }
-        .horizontal-scroll::-webkit-scrollbar-thumb {
-            background-color: var(--primary);
-            border-radius: 4px;
+            scrollbar-width: thin;
         }
 
         /* Card Styling */
@@ -133,21 +116,15 @@
             background: #1e1e1e;
             border-radius: 10px;
             overflow: hidden;
-            min-width: 180px; /* Fixed width for horizontal scroll */
-            max-width: 180px;
-            transition: transform 0.2s;
+            min-width: 160px;
+            max-width: 160px;
             position: relative;
             flex-shrink: 0;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            background: #2a2a2a;
-        }
-
         .card img {
             width: 100%;
-            height: 180px;
+            height: 160px;
             object-fit: cover;
         }
 
@@ -176,14 +153,14 @@
             font-size: 0.8rem;
         }
 
-        /* RESULTS GRID (Search results) */
+        /* RESULTS GRID */
         #results-section {
             padding: 20px;
             display: none;
         }
         .search-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 20px;
         }
         .search-grid .card {
@@ -215,7 +192,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            width: 30%;
+            width: 40%;
         }
 
         .player-img {
@@ -225,6 +202,12 @@
             object-fit: cover;
         }
 
+        .player-text {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         .player-text h4 {
             margin: 0;
             font-size: 0.9rem;
@@ -232,16 +215,20 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 150px;
+        }
+
+        .player-status {
+            font-size: 0.75rem;
+            color: var(--primary);
         }
 
         .player-controls {
             flex-grow: 1;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
         }
 
-        audio { width: 100%; max-width: 500px; height: 40px; }
+        audio { width: 100%; max-width: 400px; height: 35px; }
 
         .loading-text { color: var(--gray); font-style: italic; }
 
@@ -251,42 +238,28 @@
 
     <!-- NAVBAR -->
     <nav>
-        <div class="logo">
-            <i class="fab fa-soundcloud"></i> Xyro Music
-        </div>
-        <button class="nav-btn" onclick="goHome()">
-            <i class="fas fa-home"></i> Home
-        </button>
+        <div class="logo"><i class="fab fa-soundcloud"></i> Xyro Music</div>
+        <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
     </nav>
 
     <!-- SEARCH BAR -->
     <div class="search-wrapper">
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Search songs...">
-            <button class="search-btn" onclick="performSearch()">
-                <i class="fas fa-search"></i>
-            </button>
+            <button class="search-btn" onclick="performSearch()"><i class="fas fa-search"></i></button>
         </div>
     </div>
 
-    <!-- HOME SECTION (Trending & Pakistani) -->
+    <!-- HOME SECTION -->
     <div id="home-section">
-        
-        <!-- Trending Section -->
         <h2 class="section-title">🔥 Trending Now</h2>
-        <div class="horizontal-scroll" id="trending-container">
-            <p class="loading-text">Loading Trending...</p>
-        </div>
+        <div class="horizontal-scroll" id="trending-container"><p class="loading-text">Loading...</p></div>
 
-        <!-- Pakistani Section -->
         <h2 class="section-title">🇵🇰 Top Pakistani Hits</h2>
-        <div class="horizontal-scroll" id="pakistani-container">
-            <p class="loading-text">Loading Pakistani Hits...</p>
-        </div>
-
+        <div class="horizontal-scroll" id="pakistani-container"><p class="loading-text">Loading...</p></div>
     </div>
 
-    <!-- SEARCH RESULTS SECTION -->
+    <!-- SEARCH RESULTS -->
     <div id="results-section">
         <h2 class="section-title">Search Results</h2>
         <div class="search-grid" id="search-results-grid"></div>
@@ -295,10 +268,10 @@
     <!-- BOTTOM PLAYER -->
     <div class="player-bar" id="musicPlayer">
         <div class="player-info">
-            <img src="https://via.placeholder.com/50" id="playerImg" class="player-img">
+            <img src="" id="playerImg" class="player-img">
             <div class="player-text">
                 <h4 id="playerTitle">Select a song</h4>
-                <span style="font-size: 0.8rem; color: #b3b3b3;">Now Playing</span>
+                <span id="playerStatus" class="player-status">Waiting...</span>
             </div>
         </div>
         <div class="player-controls">
@@ -309,59 +282,49 @@
     </div>
 
     <script>
-        const API_BASE = "https://api.xyro.site/search/soundcloud?q=";
+        const SEARCH_API = "https://api.xyro.site/search/soundcloud?q=";
+        const DOWNLOAD_API = "https://api.xyro.site/download/soundcloud?url=";
 
-        // Page Load hone par Home Data Fetch karo
         window.onload = function() {
             fetchAndRender("Global Viral Hits 2024", "trending-container");
-            fetchAndRender("Coke Studio Pakistan Top Hits", "pakistani-container");
+            fetchAndRender("Pakistan Coke Studio Top Hits", "pakistani-container");
         };
 
         function goHome() {
             document.getElementById('home-section').style.display = 'block';
             document.getElementById('results-section').style.display = 'none';
-            document.getElementById('searchInput').value = '';
         }
 
-        // --- SEARCH FUNCTION ---
         async function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
-
             document.getElementById('home-section').style.display = 'none';
             document.getElementById('results-section').style.display = 'block';
-            const grid = document.getElementById('search-results-grid');
-            grid.innerHTML = "<p class='loading-text'>Searching...</p>";
-
+            document.getElementById('search-results-grid').innerHTML = "<p class='loading-text'>Searching...</p>";
             await fetchAndRender(query, "search-results-grid");
         }
 
-        // --- CORE FUNCTION TO FETCH API & SHOW CARDS ---
         async function fetchAndRender(query, containerId) {
             const container = document.getElementById(containerId);
-            
             try {
-                const response = await fetch(API_BASE + encodeURIComponent(query));
+                const response = await fetch(SEARCH_API + encodeURIComponent(query));
                 const json = await response.json();
                 
-                // Normalizing Data
                 let songs = [];
                 if (Array.isArray(json)) songs = json;
                 else if (json.data) songs = json.data;
-                else if (json.result) songs = json.result;
 
-                container.innerHTML = ""; // Clear loading text
-
+                container.innerHTML = "";
                 if (!songs || songs.length === 0) {
                     container.innerHTML = "<p>No songs found.</p>";
                     return;
                 }
 
-                // Sirf pehle 15 songs dikhao taake load kam ho
                 songs.slice(0, 15).forEach(song => {
-                    const title = song.title || song.name || "Unknown Track";
-                    const img = song.thumbnail || song.image || song.artwork_url || "https://via.placeholder.com/200";
-                    const streamUrl = song.download || song.url || song.link;
+                    const title = song.title || song.name || "Unknown";
+                    const img = song.thumbnail || song.image || "https://via.placeholder.com/200";
+                    // Important: Save the original URL to convert later
+                    const trackUrl = song.url || song.permalink_url || song.link;
 
                     const card = document.createElement('div');
                     card.className = 'card';
@@ -369,32 +332,66 @@
                         <img src="${img}" alt="Art">
                         <div class="card-body">
                             <div class="card-title">${title}</div>
-                            <button class="play-overlay-btn" onclick="playTrack('${streamUrl}', '${title.replace(/'/g, "\\'")}', '${img}')">
+                            <button class="play-overlay-btn" onclick="prepareTrack('${trackUrl}', '${title.replace(/'/g, "\\'")}', '${img}')">
                                 <i class="fas fa-play"></i> Play
                             </button>
                         </div>
                     `;
                     container.appendChild(card);
                 });
-
             } catch (error) {
                 console.error(error);
-                container.innerHTML = "<p style='color:red;'>Error loading.</p>";
+                container.innerHTML = "<p style='color:red;'>Error loading data.</p>";
             }
         }
 
-        // --- PLAYER FUNCTION ---
-        function playTrack(url, title, img) {
+        // --- NEW PLAYBACK LOGIC ---
+        async function prepareTrack(trackUrl, title, img) {
             const playerBar = document.getElementById('musicPlayer');
             const audio = document.getElementById('audioElement');
             const pTitle = document.getElementById('playerTitle');
+            const pStatus = document.getElementById('playerStatus');
             const pImg = document.getElementById('playerImg');
 
+            // 1. Show Player immediately
             playerBar.classList.add('active');
             pTitle.innerText = title;
             pImg.src = img;
-            audio.src = url;
-            audio.play().catch(e => console.log("Play error", e));
+            pStatus.innerText = "Getting Stream...";
+            
+            // Pause current audio if playing
+            audio.pause(); 
+            audio.src = "";
+
+            try {
+                // 2. Convert SoundCloud Link to MP3 using Download API
+                console.log("Fetching stream for:", trackUrl);
+                const response = await fetch(DOWNLOAD_API + encodeURIComponent(trackUrl));
+                const data = await response.json();
+                
+                console.log("Stream Data:", data);
+
+                // Handle API structure variations
+                let streamLink = null;
+                if (data.data && data.data.download) streamLink = data.data.download;
+                else if (data.download) streamLink = data.download;
+                else if (data.url) streamLink = data.url;
+
+                if (streamLink) {
+                    pStatus.innerText = "Playing...";
+                    audio.src = streamLink;
+                    audio.play().catch(e => {
+                        pStatus.innerText = "Error: Browser blocked autoplay.";
+                    });
+                } else {
+                    pStatus.innerText = "Failed: Stream link not found.";
+                    alert("Sorry, is song ka direct download link nahi mila.");
+                }
+
+            } catch (error) {
+                console.error("Stream Error:", error);
+                pStatus.innerText = "Error fetching stream.";
+            }
         }
     </script>
 </body>
