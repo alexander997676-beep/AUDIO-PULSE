@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xyro Music Player</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary: #ff5500; /* SoundCloud Orange */
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light: #ffffff;
+            --gray: #b3b3b3;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 100px; /* Space for player */
+        }
+
+        /* Navbar */
+        nav {
+            background-color: var(--darker);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid var(--gray);
+            color: var(--light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Search Section */
+        .search-wrapper {
+            padding: 20px;
+            background-color: var(--darker);
+            text-align: center;
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: none;
+            background: #333;
+            color: white;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            background: #444;
+        }
+
+        .search-btn {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            padding: 0 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* HOME SECTION */
+        #home-section {
+            text-align: center;
+            padding: 50px 20px;
+            display: block; /* Visible by default */
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .hero-desc {
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+
+        .tags {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #333;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .tag:hover { background: var(--primary); }
+
+        /* RESULTS SECTION */
+        #results-section {
+            padding: 20px;
+            display: none; /* Hidden by default */
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: #2a2a2a;
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 5px;
+        }
+
+        .play-overlay-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .play-overlay-btn:hover { background-color: #e64d00; }
+
+        /* BOTTOM PLAYER */
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #181818;
+            border-top: 1px solid #333;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 200;
+            box-sizing: border-box;
+            transform: translateY(100%); /* Hidden initially */
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .player-bar.active {
+            transform: translateY(0);
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 30%;
+        }
+
+        .player-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .player-text h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        .player-controls {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        audio {
+            width: 100%;
+            max-width: 500px;
+            height: 40px;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            border: 4px solid #333;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="logo">
+            <i class="fab fa-soundcloud"></i> MusicHub
+        </div>
+        <button class="nav-btn" onclick="goHome()">
+            <i class="fas fa-home"></i> Home
+        </button>
+    </nav>
+
+    <!-- SEARCH BAR -->
+    <div class="search-wrapper">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for songs (e.g. Sidhu Moose Wala)...">
+            <button class="search-btn" onclick="searchSong()">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- HOME SECTION -->
+    <div id="home-section">
+        <h1 class="hero-title">Discover Music</h1>
+        <p class="hero-desc">Search and stream your favorite tracks instantly.</p>
+        
+        <div class="tags">
+            <div class="tag" onclick="quickSearch('Top Hits 2024')">Top Hits 2024</div>
+            <div class="tag" onclick="quickSearch('LoFi Beats')">LoFi Beats</div>
+            <div class="tag" onclick="quickSearch('Punjabi Hits')">Punjabi Hits</div>
+            <div class="tag" onclick="quickSearch('Arijit Singh')">Arijit Singh</div>
+        </div>
+    </div>
+
+    <!-- RESULTS SECTION -->
+    <div id="loader" class="loader"></div>
+    <div id="results-section">
+        <h3 style="margin-bottom: 20px;">Search Results:</h3>
+        <div class="grid" id="results-grid">
+            <!-- Cards will be injected here -->
+        </div>
+    </div>
+
+    <!-- BOTTOM PLAYER -->
+    <div class="player-bar" id="musicPlayer">
+        <div class="player-info">
+            <img src="https://via.placeholder.com/50" id="playerImg" class="player-img">
+            <div class="player-text">
+                <h4 id="playerTitle">Select a song</h4>
+                <span style="font-size: 0.8rem; color: #b3b3b3;">Now Playing</span>
+            </div>
+        </div>
+        <div class="player-controls">
+            <audio id="audioElement" controls>
+                <source src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "https://api.xyro.site/search/soundcloud?q=";
+
+        // --- NAVIGATION FUNCTIONS ---
+        function goHome() {
+            document.getElementById('home-section').style.display = 'block';
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+        }
+
+        function quickSearch(term) {
+            document.getElementById('searchInput').value = term;
+            searchSong();
+        }
+
+        // --- SEARCH FUNCTION ---
+        async function searchSong() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return alert("Kuch likh kar search karein!");
+
+            // UI Updates
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('results-section').style.display = 'block';
+            const grid = document.getElementById('results-grid');
+            const loader = document.getElementById('loader');
+            
+            grid.innerHTML = ""; // Clear old results
+            loader.style.display = "block";
+
+            try {
+                const response = await fetch(API_BASE + encodeURIComponent(query));
+                const json = await response.json();
+                
+                loader.style.display = "none";
+
+                // Normalize Data (Handle different API structures)
+                let songs = [];
+                if (Array.isArray(json)) songs = json;
+                else if (json.data) songs = json.data;
+                else if (json.result) songs = json.result;
+
+                if (songs.length === 0) {
+                    grid.innerHTML = "<p>Koi song nahi mila. Dubara try karein.</p>";
+                    return;
+                }
+
+                songs.forEach(song => {
+                    // Extract Details
+                    const title = song.title || song.name || "Unknown Track";
+                    const img = song.thumbnail || song.image || song.artwork_url || "https://via.placeholder.com/200";
+                    // Try to find a playable link
+                    const streamUrl = song.download || song.url || song.link;
+
+                    // Create Card HTML
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <img src="${img}" alt="Art">
+                        <div class="card-body">
+                            <div class="card-title">${title}</div>
+                            <button class="play-overlay-btn" onclick="playTrack('${streamUrl}', '${title.replace(/'/g, "\\'")}', '${img}')">
+                                <i class="fas fa-play"></i> Play Now
+                            </button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                loader.style.display = "none";
+                grid.innerHTML = "<p style='color:red;'>Error fetching data. API might be busy.</p>";
+            }
+        }
+
+        // --- PLAYER FUNCTION ---
+        function playTrack(url, title, img) {
+            const playerBar = document.getElementById('musicPlayer');
+            const audio = document.getElementById('audioElement');
+            const pTitle = document.getElementById('playerTitle');
+            const pImg = document.getElementById('playerImg');
+
+            // Show Player
+            playerBar.classList.add('active');
+
+            // Update Info
+            pTitle.innerText = title;
+            pImg.src = img;
+
+            // Update Audio Source
+            audio.src = url;
+            
+            // Try to play
+            audio.play().catch(e => {
+                console.log("Auto-play blocked or link invalid", e);
+                alert("Playback error: Yeh link shayad direct MP3 nahi hai, ya browser ne block kiya hai.");
+            });
+        }
+    </script>
+</body>
+</html>
